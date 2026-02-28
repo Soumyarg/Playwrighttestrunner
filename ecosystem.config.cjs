@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'playwright-runner-ui',
       script: 'npx',
-      args: 'vite preview --port 3000 --host 0.0.0.0',
+      args: 'serve build -l 3000 -s',
       cwd: '/home/user/webapp',
       env: { NODE_ENV: 'production' },
       watch: false,
