@@ -8,22 +8,21 @@ import {
   toggleModule, toggleSuite, setSelectedTest, deleteModule,
   deleteSuite, deleteTest, updateTestStatus
 } from '../../store/testsSlice';
-import { startExecution, appendLog, finishExecution } from '../../store/executionSlice';
 import { showNotification } from '../../store/uiSlice';
-import { getStatusBg, formatRelativeTime, simulateTestExecution } from '../../utils/helpers';
+import { getStatusBg, formatRelativeTime } from '../../utils/helpers';
+import { useNavigate } from 'react-router-dom';
 
 export default function SuiteExplorer({ onAddModule, onAddSuite, onAddTest, onEdit }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const modules = useSelector(state => state.tests.modules);
   const selectedTestId = useSelector(state => state.tests.selectedTestId);
 
   const handleRunTest = (test) => {
-    simulateTestExecution(
-      dispatch,
-      { startExecution, appendLog, finishExecution, updateTestStatus },
-      { testId: test.id, testName: test.name }
-    );
-    dispatch(showNotification({ type: 'info', message: `Running: ${test.name}` }));
+    // Select the test code and navigate to the Execution page
+    dispatch(setSelectedTest(test));
+    dispatch(showNotification({ type: 'info', message: `Loaded "${test.name}" — Connect & run on Execution page` }));
+    navigate('/test-execution');
   };
 
   const handleDeleteModule = (modId, modName) => {

@@ -161,6 +161,7 @@ test('main navigation', async ({ page }) => {
 const testsSlice = createSlice({
   name: 'tests',
   initialState: {
+    pendingExecution: null, // { code, testName } | null
     modules: initialModules,
     savedTests: initialSavedTests,
     selectedTestId: 'test-1',
@@ -300,6 +301,10 @@ const testsSlice = createSlice({
     updateFramework(state, action) {
       state.framework = { ...state.framework, ...action.payload };
     },
+    setPendingExecution(state, action) {
+      // action.payload = { code, testName } or null to clear
+      state.pendingExecution = action.payload;
+    },
   },
 });
 
@@ -307,6 +312,6 @@ export const {
   setCurrentCode, setSelectedTest, toggleModule, toggleSuite,
   addModule, addSuite, addTest, deleteModule, deleteSuite, deleteTest,
   updateTestStatus, saveSavedTest, deleteSavedTest, deleteSavedTests,
-  updateFramework,
+  updateFramework, setPendingExecution,
 } = testsSlice.actions;
 export default testsSlice.reducer;

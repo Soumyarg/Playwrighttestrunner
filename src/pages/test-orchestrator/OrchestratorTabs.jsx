@@ -5,11 +5,12 @@ import {
   Copy, Check, Download, Zap, BarChart2, ChevronDown, FileCode,
   LayoutPanelLeft, Settings2, Braces
 } from 'lucide-react';
-import { setCurrentCode, saveSavedTest, updateTestStatus } from '../../store/testsSlice';
+import { setCurrentCode, saveSavedTest, updateTestStatus, setPendingExecution } from '../../store/testsSlice';
 import { startExecution, appendLog, finishExecution } from '../../store/executionSlice';
 import { setActiveOrchestratorTab, showNotification } from '../../store/uiSlice';
-import { simulateTestExecution, formatRelativeTime } from '../../utils/helpers';
+import { formatRelativeTime } from '../../utils/helpers';
 import SaveTestDialog from './SaveTestDialog';
+import { useNavigate } from 'react-router-dom';
 
 const TABS = [
   { id: 'test-code', label: 'Test Code', icon: Code2 },
@@ -28,6 +29,7 @@ export default function OrchestratorTabs() {
   const isRunning = useSelector(state => state.execution.isRunning);
   const [copied, setCopied] = useState(false);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Find selected test
   let selectedTest = null;
@@ -44,12 +46,10 @@ export default function OrchestratorTabs() {
       dispatch(showNotification({ type: 'warning', message: 'No test code to run' }));
       return;
     }
-    simulateTestExecution(
-      dispatch,
-      { startExecution, appendLog, finishExecution, updateTestStatus },
-      { testId: selectedTestId, testName: selectedTest?.name || 'Current Test' }
-    );
-    dispatch(showNotification({ type: 'info', message: '▶  Test execution started' }));
+    // Queue execution and navigate to Test Execution page
+    dispatch(setPendingExecution({ code: currentCode, testName: selectedTest?.name || 'Current Test' }));
+    dispatch(showNotification({ type: 'info', message: '▶ Running test in Execution page...' }));
+    navigate('/test-execution');
   };
 
   const handleCopy = () => {
